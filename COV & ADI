@@ -1,0 +1,61 @@
+        
+#### sku_char ####
+sku_char = data.keys()
+sku_char = pd.DataFrame(data=sku_char)
+
+#### COV  ####
+cov_df = []
+ADI_list=[]
+F = D_edit ['y']
+for i in D_dict:
+    D_edit = D_dict[i]
+#     D_edit = D_edit.drop(columns = ['error'])
+    D_edit = D_edit.fillna(D_edit.mean())
+#     print(D_edit)
+    mean1 = D_edit['y'].mean()
+#     print(mean1)
+    std1 = D_edit['y'].std()
+#     print(std1)
+    cov = std1/mean1    #cofficient of variation
+#     print(cov)
+    cov2 = math.pow(cov,2)
+#     print(type(cov2))
+    cov_df.append(cov2)
+    cov_df1= pd.DataFrame(data=cov_df)
+    
+    
+    
+    
+   #### FOR ADI ####
+ 
+    D_edit['ds'] = pd.to_datetime(D_edit['ds'])
+    diff = D_edit['ds'].max() - D_edit['ds'].min()
+    diff = diff/7
+    diff1 = int(diff.days)
+#     print(diff1)
+
+    ADI = diff1/len(D_edit)
+    ADI_list.append(ADI)
+    ADI_df = pd.DataFrame(data=ADI_list)
+#     print(ADI)
+    
+#     print(type(ADI))
+    
+    if (ADI < 1.32 and cov2 < 0.49):
+#         print('Demand is smooth')
+        sku_char['remark'] = 'Demand is smooth'
+        
+    elif (ADI < 1.32 and cov2 >= 0.49):
+#         print('Demand is erratic')
+        sku_char['remark'] = 'Demand is erratic'
+        
+    elif (ADI >= 1.32 and cov2 < 0.49):
+#         print('Demand is intermittent')
+        sku_char['remark'] = 'Demand is intermittent'
+        
+    else :
+#         print('Demand is lumpy')
+        sku_char['remark'] = 'Demand is lumpy'
+        
+        
+    
